@@ -12,6 +12,10 @@ local defaultData = {
 	house_chests_management = true,
 	booster = true,
 	trophy = true,
+	lure = true,
+	furnishing_material = true,
+	furnishing = true,
+	style_material = true,
 	colour = {
 		warnings = "|cba6a1a",
 		notifications = "|c638C29"
@@ -19,11 +23,14 @@ local defaultData = {
 }
 
 function InventoryManager:UpdateSettingsData()
-	d("Updating setiings...")
+	if InventoryManager.savedVariables.debug then
+		d("Updating Inventory Manager setiings...")
+	end
 	self.valid_item_types[ITEMTYPE_BLACKSMITHING_RAW_MATERIAL] = self.savedVariables.raw_material
 	self.valid_item_types[ITEMTYPE_WOODWORKING_RAW_MATERIAL] = self.savedVariables.raw_material
 	self.valid_item_types[ITEMTYPE_CLOTHIER_RAW_MATERIAL] = self.savedVariables.raw_material
 	self.valid_item_types[ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL] = self.savedVariables.raw_material
+	self.valid_item_types[ITEMTYPE_RAW_MATERIAL] = self.savedVariables.raw_material
 
 	self.valid_item_types[ITEMTYPE_WOODWORKING_MATERIAL] = self.savedVariables.refined_material
 	self.valid_item_types[ITEMTYPE_BLACKSMITHING_MATERIAL] = self.savedVariables.refined_material
@@ -53,7 +60,12 @@ function InventoryManager:UpdateSettingsData()
 	
 	self.valid_item_types[ITEMTYPE_TROPHY] = self.savedVariables.trophy
 
-	
+	self.valid_item_types[ITEMTYPE_STYLE_MATERIAL] = self.savedVariables.style_material
+
+	self.valid_item_types[ITEMTYPE_FURNISHING_MATERIAL] = self.savedVariables.furnishing_material
+	self.valid_item_types[ITEMTYPE_FURNISHING] = self.savedVariables.furnishing
+
+	self.valid_item_types[ITEMTYPE_LURE] = self.savedVariables.lure
 	
 	self.valid_storage_types[BAG_BANK] = self.savedVariables.bank_management
 	for bag_id = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
@@ -64,51 +76,8 @@ end
 function InventoryManager:InitSavedVariables()
 
 	self.savedVariables = ZO_SavedVars:NewAccountWide("InventoryManagerData", self.variableVersion, nil, defaultData)
-	-------------------------------------------------------------------------------------------------
-	-- If we reloadui whilst in combat, we still need to return the skill after combat ends --
-	-------------------------------------------------------------------------------------------------
-	self.valid_item_types = {
-		--[ITEMTYPE_WOODWORKING_MATERIAL] = self.savedVariables.refined_material,
-		--[ITEMTYPE_BLACKSMITHING_MATERIAL] = self.savedVariables.refined_material,
-		--[ITEMTYPE_CLOTHIER_MATERIAL] = self.savedVariables.refined_material,
-		--[ITEMTYPE_JEWELRYCRAFTING_MATERIAL] = self.savedVariables.refined_material,
-		
-		--[ITEMTYPE_ENCHANTING_RUNE_ASPECT] = true,
-		--[ITEMTYPE_ENCHANTING_RUNE_ESSENCE] = true,
-		--[ITEMTYPE_ENCHANTING_RUNE_POTENCY] = true,
-		
-		--[ITEMTYPE_INGREDIENT] = true,
-		--[ITEMTYPE_REAGENT] = true,
-		--[ITEMTYPE_POTION_BASE] = true,
-		--[ITEMTYPE_POISON_BASE] = true,
-		
 
-		
-		[ITEMTYPE_STYLE_MATERIAL] = true,
-		
-		--[ITEMTYPE_BLACKSMITHING_RAW_MATERIAL] = true,
-		--[ITEMTYPE_WOODWORKING_RAW_MATERIAL] = true,
-		--[ITEMTYPE_CLOTHIER_RAW_MATERIAL] = true,
-		--[ITEMTYPE_JEWELRY_RAW_TRAIT] = true,
-		--[ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL] = true,
-		
-		--[ITEMTYPE_TROPHY] = true,
-		
-		--[ITEMTYPE_ARMOR_TRAIT] = true,
-		--[ITEMTYPE_WEAPON_TRAIT] = true,
-		--[ITEMTYPE_JEWELRY_TRAIT] = true,
-		
-		[ITEMTYPE_FURNISHING_MATERIAL] = true,
-		
-		--[ITEMTYPE_BLACKSMITHING_BOOSTER] = true,
-		--[ITEMTYPE_WOODWORKING_BOOSTER] = true,
-		--[ITEMTYPE_CLOTHIER_BOOSTER] = true,
-		--[ITEMTYPE_JEWELRYCRAFTING_BOOSTER] = true,
-		--[ITEMTYPE_JEWELRYCRAFTING_RAW_BOOSTER] = true,
-		--[ITEMTYPE_ENCHANTMENT_BOOSTER] = true,
-		
-		[ITEMTYPE_LURE] = true
-	}
+	self.valid_item_types = {}
 	self.valid_storage_types = {}
 	InventoryManager:UpdateSettingsData()
 

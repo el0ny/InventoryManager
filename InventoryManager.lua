@@ -20,7 +20,7 @@ InventoryManager.colours = {
 name = "test"
 
 
-function InventoryManagement:buildStorageTable(storage_bag_id)
+function InventoryManager:buildStorageTable(storage_bag_id)
 	storage_table = {}
 	local slot_id = ZO_GetNextBagSlotIndex(storage_bag_id)
 	while slot_id do
@@ -36,30 +36,14 @@ function InventoryManagement:buildStorageTable(storage_bag_id)
 	return storage_table
 end
 
---local function findTargetSlotId(targetItemId, storage_bag_id)
---
---	local slot_id = ZO_GetNextBagSlotIndex(storage_bag_id)
---	while slot_id do
---		local item_id = GetItemId(storage_bag_id, slot_id)
---		--d(GetItemName(storage_bag_id, slot_id))
---		if item_id == targetItemId then return slot_id end
---
---		slot_id = ZO_GetNextBagSlotIndex(storage_bag_id, slot_id)
---	end
---end
-
-
 function InventoryManager.main(event, storage_bag_id)
 	if not InventoryManager.valid_storage_types[storage_bag_id] then
 		d("oops: " .. storage_bag_id)
 		return
 	end
- 	--local bagId = BAG_BACKPACK
-	--d(storage_bag_id)
-	--d(InventoryManager.valid_item_types)
 
 	local inventory_slot = ZO_GetNextBagSlotIndex(BAG_BACKPACK)
-	storage_table = InventoryManagement:buildStorageTable(storage_bag_id)
+	storage_table = InventoryManager:buildStorageTable(storage_bag_id)
 
 	while inventory_slot do
 		local item_type = GetItemType(BAG_BACKPACK, inventory_slot)
@@ -103,28 +87,12 @@ function InventoryManager.main(event, storage_bag_id)
 	end
 end
 
-
-slot_surveys = function (event, bag) 
-	d('lol')
-	local bagId = BAG_BACKPACK
-
-	local slot = ZO_GetNextBagSlotIndex(bagId)
-	while slot do
-		item_type = GetItemType(bagId, slot)
-		local item_id = GetItemId(BAG_BACKPACK, slot)
-		d(GetItemName(bagId, slot)..'     '..item_type)
-		slot = ZO_GetNextBagSlotIndex(bag, slot)
-	end
-end
-
 InventoryManager.slot_surveys = slot_surveys
 
 
 function InventoryManager:Initialize()
 	
 	InventoryManager:InitSavedVariables()
-
-	--InventoryManager.setupInventoryMoveEvents()
 
 	InventoryManager:InitMenu()
 	EVENT_MANAGER:UnregisterForEvent(name, EVENT_ADD_ON_LOADED)
@@ -141,12 +109,12 @@ EVENT_MANAGER:RegisterForEvent(InventoryManager.name, EVENT_OPEN_BANK, Inventory
 
 
 --
- local function _onInventoryChanged(eventCode, bagId, slotIndex, isNewItem, itemSoundCategory, updateReason, stackCountChange)
-   local link = GetItemLink(bagId, slotIndex)
-   local item_type = GetItemType(bagId, slotIndex)
-   d("Picked up a " .. link .. "." .. item_type .. " Bag: " .. bagId)
+local function _onInventoryChanged(eventCode, bagId, slotIndex, isNewItem, itemSoundCategory, updateReason, stackCountChange)
+	if InventoryManager.savedVariables.debug then
+		 local link = GetItemLink(bagId, slotIndex)
+		 local item_type = GetItemType(bagId, slotIndex)
+   		 d("Picked up a " .. link .. "." .. item_type .. " Bag: " .. bagId)
+	end
 end
+
 EVENT_MANAGER:RegisterForEvent(InventoryManager.name, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, _onInventoryChanged)
---EVENT_MANAGER:AddFilterForEvent("MyExampleEvent", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_IS_NEW_ITEM, true)
---EVENT_MANAGER:AddFilterForEvent(InventoryManager.name, EVENT_OPEN_BANK, REGISTER_FILTER_BAG_ID, BAG_BANK)
---EVENT_MANAGER:AddFilterForEvent("MyExampleEvent", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
